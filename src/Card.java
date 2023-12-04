@@ -31,7 +31,15 @@ public class Card {
         return point;
     }
 
+    public boolean isGreater(Card other) {
+        return this.point >= other.point;
+    }
+
+    public boolean equals(Card card) {
+        return card.point == this.point && card.suit.equals(this.suit);
+    }
+    @Override
     public String toString() {
-        return rank + " of " + suit;
+        return "" + (rank.equals("10") ? rank.substring(0, 2) : rank.charAt(0)) + suit.charAt(0);
     }
 }
