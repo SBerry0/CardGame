@@ -4,19 +4,27 @@ public class Player {
     private String name;
     private Deck hand;
     private Deck hiddenHand;
+    private Deck topHand;
 
     public Player(String name) {
         this.name = name;
-        this.hand = new Deck(true);
+        this.hand = new Deck(false);
+        this.topHand = new Deck(false);
         this.hiddenHand = new Deck(false);
     }
-
     public String getName() {
         return name;
     }
 
     public Deck getHand() {
         return hand;
+    }
+    public Deck getHiddenHand() {
+        return hiddenHand;
+    }
+
+    public Deck getTopHand() {
+        return topHand;
     }
 
     public boolean hasCard(Card card) {
@@ -26,32 +34,38 @@ public class Player {
         return hand.hasCard(card);
     }
 
-    public void addCard(Deck deck) {
-        hand.addCard(deck.deal());
-    }
-
-    public void addHiddenCard(Deck deck) {
-        hiddenHand.addCard(deck.deal());
-    }
-
-    public void printHand() {
-        System.out.print(name + ": ");
-        if (!hand.isEmpty()) {
-            System.out.println(hand);
+    public String asterize(int count) {
+        String out = "";
+        for (int i = 0; i < count; i++) {
+            out += "* ";
         }
-        if (!hiddenHand.isVisible()) {
-            System.out.print("\t");
-            for (int i = 0; i < hiddenHand.size(); i++) {
-                System.out.print("* ");
-            }
-        }
-        else {
-            System.out.println(hiddenHand);
-        }
+        return out;
     }
 
     @Override
     public String toString() {
-        return name + "'s cards: " + hand;
+        String out = name + ":\n";
+        out += "Hand: ";
+        if (!hand.isEmpty() && hand.isVisible()) {
+            out += hand.toString();
+        }
+        else {
+            out += asterize(hand.size());
+        }
+        out += "\n";
+        if (!topHand.isEmpty() && topHand.isVisible()) {
+            out += topHand.toString();
+        }
+        else {
+            out += asterize(topHand.size());
+        }
+        out += "\n";
+        if (!hiddenHand.isEmpty() && hiddenHand.isVisible()) {
+            out += hiddenHand.toString();
+        }
+        else {
+            out += asterize(hiddenHand.size());
+        }
+        return out.substring(0, out.length()-1);
     }
 }

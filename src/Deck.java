@@ -22,6 +22,10 @@ public class Deck {
         this.isVisible = isVisible;
     }
 
+    public Card getTopCard() {
+        return cardsLeft == 0 ? null : cards.get(cardsLeft-1);
+    }
+
     public boolean isEmpty() {
         return cardsLeft == 0;
     }
@@ -57,12 +61,19 @@ public class Deck {
     }
 
 
+    public boolean takeCard(Card card) {
+        if (cardsLeft == 0) { return false; }
+        cards.remove(card);
+        return true;
+    }
+
+
     public Card deal() {
         if (isEmpty()) {
             return null;
         }
         cardsLeft--;
-        return cards.remove(cardsLeft - 1);
+        return cards.remove(cardsLeft);
     }
 
     public void shuffle() {
