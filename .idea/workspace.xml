@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="396ca277-d531-4d37-bd04-ba33dbfc9cb3" name="Changes" comment="Added printGame and dealing to start Palace">
+    <list default="true" id="396ca277-d531-4d37-bd04-ba33dbfc9cb3" name="Changes" comment="Ability to play cards">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Deck.java" afterDir="false" />
@@ -16,6 +16,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ChangesViewManager" show_ignored="true" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -104,13 +105,22 @@
       <option name="project" value="LOCAL" />
       <updated>1701744142096</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Ability to play cards">
+      <option name="closed" value="true" />
+      <created>1702000232887</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1702000232888</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Created getters and setters for card" />
     <MESSAGE value="Added deck and players" />
     <MESSAGE value="Added printGame and dealing to start Palace" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added printGame and dealing to start Palace" />
+    <MESSAGE value="Ability to play cards" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ability to play cards" />
   </component>
 </project>

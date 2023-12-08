@@ -5,12 +5,15 @@ public class Player {
     private Deck hand;
     private Deck hiddenHand;
     private Deck topHand;
+    // Holds the player's phase. 1=mainGame, 2=topGame, 3=endGame
+    private int gamePhase;
 
     public Player(String name) {
         this.name = name;
         this.hand = new Deck(false);
         this.topHand = new Deck(false);
         this.hiddenHand = new Deck(false);
+        this.gamePhase = 1;
     }
     public String getName() {
         return name;
@@ -21,6 +24,18 @@ public class Player {
     }
     public Deck getHiddenHand() {
         return hiddenHand;
+    }
+
+    public int getGamePhase() {
+        return gamePhase;
+    }
+
+    public void setTopPhase() {
+        gamePhase = 2;
+    }
+
+    public void setEndPhase() {
+        gamePhase = 3;
     }
 
     public Deck getTopHand() {

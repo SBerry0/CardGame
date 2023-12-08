@@ -36,7 +36,7 @@ public class Card {
     }
 
     public boolean equals(Card card) {
-        return card.point == this.point && card.suit.equals(this.suit);
+        return card.point == this.point;
     }
     @Override
     public String toString() {

@@ -42,8 +42,12 @@ public class Deck {
         return isVisible;
     }
 
-    public void toggleVisibility() {
-        isVisible = !isVisible;
+    public void makeVisible() {
+        isVisible = true;
+    }
+
+    public void makeInvisible() {
+        isVisible = false;
     }
 
     public int size() {
@@ -64,13 +68,17 @@ public class Deck {
         cardsLeft++;
     }
 
-
     public Card takeCard(Card card) {
         if (cardsLeft == 0) { return null; }
         cards.remove(card);
+        cardsLeft--;
         return card;
     }
-
+    public Card takeCard(int index) {
+        if (cardsLeft == 0) { return null; }
+        cardsLeft--;
+        return cards.remove(index);
+    }
 
     public Card deal() {
         if (isEmpty()) {
@@ -89,7 +97,7 @@ public class Deck {
     }
 
     public String toString() {
-        String out = "  ";
+        String out = "";
         for (Card card :
                 cards) {
             out += card.toString();

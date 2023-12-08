@@ -1,18 +1,19 @@
 import java.util.Scanner;
 
 public class Game {
-    private final String[] ordering = {"first", "second", "third", "fourth", "fifth", "sixth"};
     private Deck gameDeck;
     private Deck pile;
     private Player[] players;
     private int numPlayers;
     private Scanner s = new Scanner(System.in);
+    private boolean isWon;
 
     public Game() {
+        isWon = false;
         pile = new Deck(true);
-        gameDeck = new Deck(new int[]{2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
-                new String[]{"Hearts", "Spades", "Diamonds", "Clubs"},
-                new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"});
+        gameDeck = new Deck(new int[] {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
+                new String[] {"Hearts", "Spades", "Diamonds", "Clubs"},
+                new String[] {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"});
         gameDeck.shuffle();
         pile.addCard(gameDeck.deal());
         do {
@@ -22,6 +23,7 @@ public class Game {
         } while (numPlayers < 2 || numPlayers > 6);
         players = new Player[numPlayers];
         for (int i = 0; i < numPlayers; i++) {
+            String[] ordering = {"first", "second", "third", "fourth", "fifth", "sixth"};
             System.out.println("What's the " + ordering[i] + " player's name?");
             String name = s.nextLine();
             players[i] = new Player(name);
@@ -56,7 +58,7 @@ public class Game {
     }
 
     public boolean canPlayCard(Deck hand) {
-        for (int i = 0; i < hand.getCardsLeft(); i++) {
+        for (int i = 0; i < hand.size(); i++) {
             if (hand.getCard(i).isGreater(pile.getCard())) {
                 return true;
             }
@@ -65,61 +67,102 @@ public class Game {
     }
 
     public void playGame() {
+        System.out.println("Shuffling order...");
         shufflePlayers();
-        for (int j = 0; j < players.length; j++) {
-            Player player = players[j];
-            System.out.println(player.getName() + ", are you ready?");
-            String ans = s.nextLine();
-            player.getHand().toggleVisibility();
-            printGame(player);
-            // TODO: check if they can play a card
-            if (canPlayCard(player.getHand())) {
-                String[] indicesArray;
-                int[] indices;
-                boolean first = true;
-                do {
-                    if (!first) {
-                        System.out.println("Invalid indices. Multiple cards must be of the same rank.");
-                    }
-                    System.out.println("Choose which card(s) you would like to play. (1-" + player.getHand().getCardsLeft() + ")");
-                    String indicesString = s.nextLine();
-                    indicesArray = indicesString.split(", ");
-                    indices = new int[indicesArray.length];
-                    for (int i = 0; i < indicesArray.length; i++) {
-                        indices[i] = Integer.valueOf(indicesArray[i]) - 1;
-                    }
-                    first = false;
-                } while (
-                        indicesArray.length > player.getHand().getCardsLeft() ||
-                                !isSameIndices(player.getHand(), indices)
-                );
-                for (int i = 0; i < indices.length; i++) {
-                    boolean isPlayed = playCard(player, player.getHand().getCard(indices[i]));
-                    if (!isPlayed) {
-                        System.out.println("You can't play that card! Try again.");
-                        j--;
-                    }
-                }
-            }
-            else {
-                System.out.println("You cannot play a card greater than a " + player.getHand().getCard().toString());
-                System.out.println("You get the pile! You now have " + pile.getCardsLeft() + player.getHand().getCardsLeft() + " cards");
-                for (int i = 0; i < pile.getCardsLeft(); i++) {
-                    player.getHand().addCard(pile.takeCard(pile.getCard(i)));
+        while (!isWon) {
+            for (Player player : players) {
+                int phase = player.getGamePhase();
+                playMainGame(player, phase);
+                if (gameDeck.isEmpty() && player.getHand().isEmpty() && phase == 1) {
+                    player.setTopPhase();
+                } else if (gameDeck.isEmpty() && player.getTopHand().isEmpty() && phase == 2) {
+                    player.setEndPhase();
+                } else if (gameDeck.isEmpty() && player.getHand().isEmpty() && player.getTopHand().isEmpty() && player.getHiddenHand().isEmpty() && phase == 3) {
+                    isWon = true;
+                    printWin(player);
+                    break;
                 }
             }
         }
     }
 
+    public void printWin(Player player) {
+        System.out.println(player.getName() + " won!");
+    }
+
+    public void printInstructions() {
+        System.out.println("Instructions...");
+    }
+
+    public void playMainGame(Player player, int gamePhase) {
+        for (int i = 0; i < 1; i++) {
+            System.out.println(player.getName() + ", are you ready?");
+            String ans = s.nextLine();
+            Deck hand = gamePhase == 1 ? player.getHand() : gamePhase == 2 ? player.getTopHand() : player.getHiddenHand();
+            hand.makeVisible();
+            printGame();
+            if (canPlayCard(hand)) {
+                int[] indices = getIndices(hand);
+                for (int j = 0; j < indices.length; j++) {
+                    boolean isPlayed = playCard(player, hand.getCard(indices[j]));
+                    if (!isPlayed) {
+                        System.out.println("You can't play that card! Try again.");
+                        i--;
+                    } else {
+                        if (gamePhase == 1) { replenish(hand); }
+                        System.out.println("Your hand is now: " + player);
+                    }
+                }
+            } else {
+                System.out.println("You cannot play a card greater than the top card!");
+                while (!pile.isEmpty()) {
+                    player.getHand().addCard(pile.takeCard(pile.size() - 1));
+                }
+                pile.addCard(gameDeck.deal());
+                System.out.println("You get the pile! You now have " + hand.size() + " cards");
+            }
+            hand.makeInvisible();
+        }
+    }
+
+    private int[] getIndices(Deck hand) {
+        String[] indicesArray;
+        int[] indices;
+        boolean first = true;
+        do {
+            if (!first) {
+                System.out.println("Invalid indices. Multiple cards must be of the same rank.");
+            }
+            System.out.println("Choose which card(s) you would like to play. (1-" + hand.getCardsLeft() + ")");
+            String indicesString = s.nextLine();
+            indicesArray = indicesString.split(", ");
+            indices = new int[indicesArray.length];
+            for (int j = 0; j < indicesArray.length; j++) {
+                indices[j] = Integer.valueOf(indicesArray[j]) - 1;
+            }
+            first = false;
+        } while (
+                indicesArray.length > hand.getCardsLeft() ||
+                        !isSameIndices(hand, indices) ||
+                        indices[0] < 0
+        );
+        return indices;
+    }
+
     public boolean isSameIndices(Deck hand, int[] indices) {
         for (int i = 0; i < indices.length; i++) {
-            for (int j = 0; j < indices.length; j++) {
-                if (!hand.getCard(i).equals(hand.getCard(j))) {
-                    return false;
-                }
+            if (!hand.getCard(i).equals(hand.getCard(0))) {
+                return false;
             }
         }
         return true;
+    }
+
+    public void replenish(Deck hand) {
+        // If the hand given has less than 3 cards, draw until they do
+        while (hand.size() < 3 && !gameDeck.isEmpty()) {
+            hand.addCard(gameDeck.deal());
+        }
     }
 
     public void printGame() {
@@ -133,12 +176,17 @@ public class Game {
         // In order to have the right spacing
         System.out.println(players[players.length - 1]);
         System.out.println("\n\nTop Card: " + pile.getCard());
+        System.out.println("Cards left in deck: " + gameDeck.getCardsLeft());
     }
 
     public void printGame(Player player) {
         System.out.println("___________________________________");
         System.out.println(player);
         System.out.println("\n\nTop Card: " + pile.getCard());
+    }
+
+    public void initGame() {
+        // TODO: Go through each player and ask them to choose the three for the top cards
     }
 
     public boolean playCard(Player player, Card card) {
@@ -155,11 +203,10 @@ public class Game {
     }
 
     public void play() {
+        printInstructions();
         deal();
+        initGame();
         playGame();
-        printGame();
-        // loop through players and play a card each time.
-
     }
     public static void main(String[] args) {
         Game g = new Game();
