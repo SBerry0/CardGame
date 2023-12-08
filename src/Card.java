@@ -40,6 +40,6 @@ public class Card {
     }
     @Override
     public String toString() {
-        return "" + (rank.equals("10") ? rank.substring(0, 2) : rank.charAt(0)) + suit.charAt(0);
+        return rank;
     }
 }

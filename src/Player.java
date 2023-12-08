@@ -45,14 +45,14 @@ public class Player {
     @Override
     public String toString() {
         String out = name + ":\n";
-        out += "Hand: ";
+        out += "Hand:\n";
         if (!hand.isEmpty() && hand.isVisible()) {
             out += hand.toString();
         }
         else {
             out += asterize(hand.size());
         }
-        out += "\n";
+        out += "\nPalace:\n";
         if (!topHand.isEmpty() && topHand.isVisible()) {
             out += topHand.toString();
         }
@@ -66,6 +66,6 @@ public class Player {
         else {
             out += asterize(hiddenHand.size());
         }
-        return out.substring(0, out.length()-1);
+        return out;
     }
 }
