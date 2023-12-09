@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="396ca277-d531-4d37-bd04-ba33dbfc9cb3" name="Changes" comment="Ability to play cards">
+    <list default="true" id="396ca277-d531-4d37-bd04-ba33dbfc9cb3" name="Changes" comment="Almost complete gameplay without the special cards">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Deck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Deck.java" afterDir="false" />
@@ -113,7 +114,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702000232888</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Almost complete gameplay without the special cards">
+      <option name="closed" value="true" />
+      <created>1702015202251</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1702015202251</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -121,6 +130,17 @@
     <MESSAGE value="Added deck and players" />
     <MESSAGE value="Added printGame and dealing to start Palace" />
     <MESSAGE value="Ability to play cards" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ability to play cards" />
+    <MESSAGE value="Almost complete gameplay without the special cards" />
+    <option name="LAST_COMMIT_MESSAGE" value="Almost complete gameplay without the special cards" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint type="java-exception">
+          <properties class="java.lang.IndexOutOfBoundsException" package="java.lang" />
+          <option name="timeStamp" value="5" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
