@@ -252,16 +252,18 @@ public class Game {
         // Take from player's hand and make it the top card after checking for special cases
         if (player.getCurrentHand().hasCard(card)) {
             if (card.isGreater(pile.getCard())) {
-                pile.addCard(player.getCurrentHand().deal(card));
                 // Check for special cards 2 and 10
-                if (pile.getCard().getRank().equals("2")) {
-                    System.out.println("2 alert");
+                if (card.getRank().equals("2")) {
+                    player.getCurrentHand().deal(card);
+                    pile.addCard(new Card(card.getSuit(), "2", 2));
                     return 2;
                 }
-                else if (pile.getCard().getRank().equals("10")) {
-                    System.out.println("10 alert");
+                else if (card.getRank().equals("10")) {
+                    player.getCurrentHand().deal(card);
                     pile.clearDeck();
                     return 2;
+                } else {
+                    pile.addCard(player.getCurrentHand().deal(card));
                 }
                 return 0;
             }
