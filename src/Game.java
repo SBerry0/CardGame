@@ -1,4 +1,6 @@
 // Game.java for Palace by Sohum Berry
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -14,11 +16,13 @@ public class Game {
     public Game() {
         isWon = false;
         pile = new Deck(true);
-        gameDeck = new Deck(new int[] {15, 3, 4, 5, 6, 7, 8, 9, 15, 11, 12, 13, 14},
+        gameDeck = new Deck(new int[] {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
                 new String[] {"Hearts", "Spades", "Diamonds", "Clubs"},
-                new String[] {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"});
+//                new String[] {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"}
+                new String[] {"2", "3", "4", "5", "6", "7"}
+        );
         gameDeck.shuffle();
-        pile.addCard(gameDeck.deal());
+//        pile.addCard(gameDeck.deal());
         do {
             System.out.println("How many people are playing?");
             numPlayers = s.nextInt();
@@ -65,7 +69,7 @@ public class Game {
     // Determines if any card in a player's hand is higher than the top card
     public boolean canPlayCard(Deck hand) {
         for (int i = 0; i < hand.size(); i++) {
-            if (hand.getCard(i).isGreater(pile.getCard())) {
+            if (hand.getCard(i).isGreater(pile.getCard()) || hand.getCard(i) instanceof SpecialCard) {
                 return true;
             }
         }
@@ -124,14 +128,14 @@ public class Game {
         System.out.println("-----------------------------------");
         System.out.println(players[players.length - 1]);
         System.out.println("___________________________________");
-        System.out.println("\n\nTop Card: " + pile.getCard());
+        System.out.println("\n\nTop Card: " + (pile.getCard() == null ? "Empty" : pile.getCard()));
         System.out.println("Cards left in deck: " + gameDeck.getCardsLeft());
     }
     // Prints an individual player for the initialization
     public void printGame(Player player) {
         System.out.println("___________________________________");
         System.out.println(player);
-        System.out.println("\n\nTop Card: " + pile.getCard());
+        System.out.println("\n\nTop Card: " + (pile.getCard() == null ? "Empty" : pile.getCard()));
     }
 
     // Repeats each player's turn in each stage until someone gets rid of all their cards
@@ -139,7 +143,7 @@ public class Game {
         while (!isWon) {
             for (Player player : players) {
                 int phase = player.getGamePhase();
-                playGamePhase(player, phase);
+                playGamePhase(player);
                 if (gameDeck.isEmpty() && player.getHand().isEmpty() && phase == 1) {
                     player.setTopPhase();
                 } else if (gameDeck.isEmpty() && player.getTopHand().isEmpty() && phase == 2) {
@@ -153,38 +157,94 @@ public class Game {
         }
     }
 
-    public void playGamePhase(Player player, int gamePhase) {
+    public int[] filterSpecials(int[] indices, Deck hand) {
+        boolean isTwo = false;
+        boolean isTen = false;
+        for (int i = 0; i < indices.length; i++) {
+            if (hand.getCard(i) instanceof SpecialCard) {
+                if (((SpecialCard) (hand.getCard(i))).isDoesClear()) {
+                    if (!isTen) {
+                        indices[i] = -1;
+                        hand.deal(i--);
+                    }
+                    isTen = true;
+                }
+                else {
+                    if (!isTwo) {
+                        indices[i] = -1;
+                        hand.deal(i--);
+                    }
+                    isTwo = true;
+                }
+            }
+        }
+        if (isTen && isTwo) {
+            for (int i = 0; i < indices.length; i++) {
+                if (hand.getCard(i) instanceof SpecialCard && !((SpecialCard) hand.getCard(i)).isDoesClear()) {
+                    indices[i] = -1;
+                }
+            }
+        }
+        int numEmpty = 0;
+        for (int i : indices) {
+            if (i == -1) {
+                numEmpty++;
+            }
+        }
+        int[] out = new int[indices.length - numEmpty];
+        int count = 0;
+        for (int i = 0; i < indices.length; i++) {
+            if (indices[i] != -1) {
+                out[count++] = indices[i];
+            }
+        }
+        return out;
+    }
+
+    public void playGamePhase(Player player) {
         for (int i = 0; i < 1; i++) {
             System.out.println(player.getName() + ", are you ready?");
             s.nextLine();
             Deck hand = player.getCurrentHand();
-            hand.makeVisible();
+            if (player.getGamePhase() != 3) {
+                hand.makeVisible();
+            }
             printGame();
-            if (canPlayCard(hand)) {
-                int[] indices = getIndices(hand, true);
-                for (int j = 0; j < indices.length; j++) {
-                    int result = playCard(player, hand.getCard(indices[j]));
-                    for (int k = 0; k < indices.length; k++) {
-                        indices[k]--;
+            if (player.getGamePhase() != 3) {
+                if (canPlayCard(hand)) {
+                    int[] indices = getIndices(hand, true);
+                    for (int j = 0; j < indices.length; j++) {
+                        int result = playCard(player, hand.getCard(indices[j]));
+                        for (int k = 0; k < indices.length; k++) {
+                            indices[k]--;
+                        }
+                        if (result == 1) {
+                            System.out.println("You can't play that card! Try again.");
+                            i--;
+                        } else if (result == 2) {
+                            System.out.println("You get to go again!");
+                            if (player.getGamePhase() == 1) {
+                                replenish(hand);
+                            }
+                            i--;
+                        } else {
+                            if (player.getGamePhase() == 1) {
+                                replenish(hand);
+                            }
+                        }
                     }
-                    if (result == 1) {
-                        System.out.println("You can't play that card! Try again.");
-                        i--;
-                    } else if (result == 2) {
-                        System.out.println("You get to go again!");
-                        i--;
-                    } else {
-                        if (gamePhase == 1) { replenish(hand); }
+                    System.out.println("Your hand is now:\n" + player);
+                } else {
+                    System.out.println("You cannot play a card greater than the top card!");
+                    while (!pile.isEmpty()) {
+                        player.getCurrentHand().addCard(pile.deal(pile.size() - 1));
                     }
+//                pile.addCard(gameDeck.deal());
+                    System.out.println("You get the pile! You now have " + hand.size() + " cards");
                 }
-                System.out.println("Your hand is now:\n" + player);
-            } else {
-                System.out.println("You cannot play a card greater than the top card!");
-                while (!pile.isEmpty()) {
-                    player.getCurrentHand().addCard(pile.deal(pile.size() - 1));
-                }
-                pile.addCard(gameDeck.deal());
-                System.out.println("You get the pile! You now have " + hand.size() + " cards");
+            }
+            else {
+                // Write code for the final stage of the game.
             }
             hand.makeInvisible();
         }
@@ -219,7 +279,7 @@ public class Game {
                         (!beSame && indicesArray.length != 3)
         );
         Arrays.sort(indices);
-        return indices;
+        return filterSpecials(indices, hand);
     }
 
     //  Asks each player to make their top hand
@@ -251,20 +311,16 @@ public class Game {
     public int playCard(Player player, Card card) {
         // Take from player's hand and make it the top card after checking for special cases
         if (player.getCurrentHand().hasCard(card)) {
-            if (card.isGreater(pile.getCard())) {
-                // Check for special cards 2 and 10
-                if (card.getRank().equals("2")) {
-                    player.getCurrentHand().deal(card);
-                    pile.addCard(new Card(card.getSuit(), "2", 2));
-                    return 2;
-                }
-                else if (card.getRank().equals("10")) {
-                    player.getCurrentHand().deal(card);
+            // Check for special cards 2 and 10
+            if (card instanceof SpecialCard) {
+                pile.addCard(player.getCurrentHand().deal(card));
+                if (((SpecialCard) card).isDoesClear()) {
                     pile.clearDeck();
-                    return 2;
-                } else {
-                    pile.addCard(player.getCurrentHand().deal(card));
                 }
+                return 2;
+            }
+            if (card.isGreater(pile.getCard())) {
+                pile.addCard(player.getCurrentHand().deal(card));
                 return 0;
             }
         }

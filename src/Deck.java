@@ -8,9 +8,16 @@ public class Deck {
     // Constructor
     public Deck(int[] points, String[] suits, String[] ranks) {
         cards = new ArrayList<Card>();
-        for (int i = 0; i < points.length; i++) {
+        for (int i = 0; i < ranks.length; i++) {
             for (int j = 0; j < suits.length; j++) {
-                cards.add(new Card(suits[j], ranks[i], points[i]));
+                if (points[i] == 2) {
+                    cards.add(new SpecialCard(suits[j], ranks[i], points[i], false));
+                } else if (points[i] == 10) {
+                    cards.add(new SpecialCard(suits[j], ranks[i], points[i], true));
+                }
+                else {
+                    cards.add(new Card(suits[j], ranks[i], points[i]));
+                }
             }
         }
         isVisible = true;
@@ -102,8 +109,7 @@ public class Deck {
     // Prints each rank in the deck in a line separated by commas
     public String toString() {
         String out = "";
-        for (Card card :
-                cards) {
+        for (Card card : cards) {
             out += card.toString();
             out += ", ";
         }

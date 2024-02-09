@@ -34,7 +34,7 @@ public class Card {
 
     // Determines which card is the bigger one
     public boolean isGreater(Card other) {
-        return this.point >= other.point;
+        return other == null || this.point >= other.point;
     }
     // Determines if a card is the same rank as another
     public boolean equals(Card card) {

@@ -68,25 +68,26 @@ public class Player {
     @Override
     public String toString() {
         String out = name + ":\n";
-        out += "Hand:\n";
         if (!hand.isEmpty() && hand.isVisible()) {
+            out += "Hand:\n";
             out += hand.toString();
         }
-        else {
+        else if (!hand.isEmpty()) {
+            out += "Hand:\n";
             out += asterize(hand.size());
         }
         out += "\nPalace:\n";
         if (!topHand.isEmpty() && topHand.isVisible()) {
             out += topHand.toString();
         }
-        else {
+        else if (!topHand.isEmpty()){
             out += asterize(topHand.size());
         }
         out += "\n";
         if (!hiddenHand.isEmpty() && hiddenHand.isVisible()) {
             out += hiddenHand.toString();
         }
-        else {
+        else if (!hiddenHand.isEmpty()) {
             out += asterize(hiddenHand.size());
         }
         return out;
