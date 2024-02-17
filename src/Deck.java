@@ -1,31 +1,43 @@
 // Deck.java for Palace by Sohum Berry
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Deck {
     private ArrayList<Card> cards;
     private boolean isVisible;
+    int originX;
+    int originY;
 
     // Constructor
     public Deck(int[] points, String[] suits, String[] ranks) {
         cards = new ArrayList<Card>();
         for (int i = 0; i < ranks.length; i++) {
             for (int j = 0; j < suits.length; j++) {
+//                System.out.println("Resources/Cards/" + (int) ((i*4)+j+1) + ".png");
                 if (points[i] == 2) {
-                    cards.add(new SpecialCard(suits[j], ranks[i], points[i], false));
+                    cards.add(new SpecialCard(suits[j], ranks[i], points[i],
+                            new ImageIcon("Resources/Cards/" + (int) ((i*4)+j+1) + ".png").getImage(),
+                            false));
                 } else if (points[i] == 10) {
-                    cards.add(new SpecialCard(suits[j], ranks[i], points[i], true));
+                    cards.add(new SpecialCard(suits[j], ranks[i], points[i],
+                            new ImageIcon("Resources/Cards/" + (int) ((i*4)+j+1) + ".png").getImage(),
+                            true));
                 }
                 else {
-                    cards.add(new Card(suits[j], ranks[i], points[i]));
+                    cards.add(new Card(suits[j], ranks[i], points[i],
+                            new ImageIcon("Resources/Cards/" + (int) ((i*4)+j+1) + ".png").getImage()));
                 }
             }
         }
         isVisible = true;
     }
     // Secondary constructor for an empty deck, usually a hand
-    public Deck(boolean isVisible) {
+    public Deck(boolean isVisible, int originX, int originY) {
         cards = new ArrayList<Card>();
         this.isVisible = isVisible;
+        this.originX = originX;
+        this.originY = originY;
     }
 
     // Getters
@@ -103,6 +115,18 @@ public class Deck {
         for (int i = cardsLeft - 1; i >= 0; i--) {
             int r = (int) (Math.random() * cardsLeft - 1);
             cards.add(i > r ? r : r + 1, cards.remove(i));
+        }
+    }
+
+    public void draw(Graphics g, GameViewer viewer) {
+        for (int i = 0; i < cards.size(); i++) {
+            cards.get(i).draw(g, isVisible, originX + i*15, originY, viewer);
+        }
+    }
+
+    public void draw(Graphics g, GameViewer viewer, boolean isVisible) {
+        for (int i = 0; i < cards.size(); i++) {
+            cards.get(i).draw(g, isVisible, originX + i*15, originY, viewer);
         }
     }
 
